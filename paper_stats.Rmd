@@ -21,6 +21,7 @@ output:
   library(sjPlot)
   library(tidyverse)
   library(broom)
+  library(pander)
 
 ```
 
@@ -57,7 +58,8 @@ Table 1. Respondent characteristics
              N              = n.miss(descript),
              "Mean SD"      = summary.1(descript),
              "Median [IQR]" = med.iqr(descript),
-             "(Min, Max)"   = min.max(descript)) %>% knitr::kable()
+             "(Min, Max)"   = min.max(descript)) %>% 
+  pander()
   
 ```
 
@@ -139,7 +141,7 @@ Table 2. Blood pressure outcomes
   table_df <- full_join(means_df, difs_df, by = "Outcome") %>%
     select(Outcome, everything())
   
-  knitr::kable(table_df)
+  pander(table_df)
                             
 ```
 
@@ -203,22 +205,20 @@ Heterogenity
     if(logged == "Yes"){
      
     data <- select(df, subj_id, tx, ep) %>% 
-            mutate(ep = log(ep)) %>%
-            mutate(tx = factor(tx, labels = c("Control", "Active"))) %>% 
-            filter(!is.na(ep)) %>%
-            spread(tx, ep) %>% 
-            mutate(effect = Active - Control) %>% 
-            filter(!is.na(effect)) 
+      mutate(ep = log(ep)) %>%
+      filter(!is.na(ep)) %>%
+      spread(tx, ep) %>% 
+      mutate(effect = Active - Control) %>% 
+      filter(!is.na(effect)) 
     }
     
     if(logged == "No"){
      
     data <- select(df, subj_id, tx, ep) %>% 
-            mutate(tx = factor(tx, labels = c("Control", "Active"))) %>% 
-            filter(!is.na(ep)) %>%
-            spread(tx, ep) %>% 
-            mutate(effect = Active - Control) %>% 
-            filter(!is.na(effect)) 
+      filter(!is.na(ep)) %>%
+      spread(tx, ep) %>% 
+      mutate(effect = Active - Control) %>% 
+      filter(!is.na(effect)) 
     }
      
     sdx <- sd(data$Active, na.rm = TRUE) 
@@ -241,9 +241,11 @@ Heterogenity
     if(Qest < 0){p <- pt(Qest, n-2) * 2}
     if(Qest > 0){p <- pt(Qest, n-2, lower.tail = FALSE) * 2}
 
-    data <- data_frame(var = var_lab, 
-                       vr = signif(sdx^2/sdy^2, 2), 
-                       p = round(p, 3))
+    data <- data_frame(
+      var = var_lab, 
+      vr = signif(sdx^2/sdy^2, 2), 
+      p = round(p, 3)
+      )
 
     return(data)
     
@@ -256,10 +258,21 @@ Heterogenity
   varnames <- c("SBP", "DBP", "Central SBP", "Central SBP", 
                 "Arterial Stiffness", "Glucose", "HDL", "LDL", "OxLDL", 
                 "PWA Augment", "TAG", "Total Cholesterol")
-     
-  vrs_df <- do.call(bind_rows, map2(data_list, varnames,  var_ratio)) 
+
+  df <- data.frame(
+    df = I(list(sbp, dbp, c_sbp, c_dbp, art_stif, glu, hdl, ldl, oxldl,
+                pwa_augment, tag, tchol)),
+    var_lab = c("SBP", "DBP", "Central SBP", "Central DBP", 
+                "Arterial Stiffness", "Glucose", "log(HDL)", "LDL", "log(OxLDL)", 
+                "PWA Augment", "log(TAG)", "log(Total Cholesterol)"), 
+    logged = c(rep("No", 6), "Yes", "No", "Yes", "No", "Yes", "Yes"),
+    stringsAsFactors = FALSE
+    )
   
-  vrs_df
+     
+  vrs_df <- do.call(bind_rows, pmap(df, var_ratio)) 
+  
+  pander(vrs_df)
 
 
 ```
@@ -277,40 +290,32 @@ Heterogenity
 
 ```
 
-
-
 ```{r all_distributions}
 
-  # dist(sbp, "SBP (mmHg)") +
-  #   ggtitle("Systolic Blood Pressure")
-  # 
-  # dist(dbp, "DBP (mmHg)", logged = "no") +
-  #   ggtitle("Diastolic Blood Pressure")
-  # 
-  # dist(oxldl, "Log(OXLDL)", logged = "yes") +
-  #   ggtitle("OXDL")
-  # 
-  # dist(art_stif, "Arterial Stiffness", logged = "no")+
-  #   ggtitle("Arterial Stiffness")
-  # 
-  # dist(glu, "Glucose", logged = "no") +
-  #   ggtitle("Glucose")
-  # 
-  # dist(ldl, "LDL", logged = "no") +
-  #   ggtitle("LDL")
-  # 
-  # dist(hdl, "Log(HDL)", logged = "yes") +
-  #   ggtitle("HDL")
-  # 
-  # dist(tchol, "Log(TCHOL)", logged = "yes")+
-  #   ggtitle("Total cholesterol")
-  # 
-  # dist(tag, "Log(TAG)", logged = "yes")+
-  #   ggtitle("TAG")
-  # 
-  # dist(pwa_augment, "PWA Augment", logged = "no")+
-  #   ggtitle("Diastolic Blood Pressure")
-  # 
+  dist(sbp, "SBP (mmHg)", logged = "no")
+
+  dist(dbp, "DBP (mmHg)", logged = "no")
+
+  dist(art_stif, "Arterial Stiffness", logged = "no")
+  
+  dist(glu, "Glucose", logged = "no") 
+  
+  dist(hdl, "HDL", logged = "no")
+  dist(hdl, "Log(HDL)", logged = "yes")
+
+  dist(ldl, "LDL", logged = "no")
+
+  dist(oxldl, "OXLDL", logged = "no")
+  dist(oxldl, "Log(OXLDL)", logged = "yes")
+
+  dist(pwa_augment, "PWA Augment", logged = "no")
+  
+  dist(tag, "TAG", logged = "no")
+  dist(tag, "Log(TAG)", logged = "yes")
+    
+  dist(tchol, "TCHOL", logged = "no")
+  dist(tchol, "Log(TCHOL)", logged = "yes")
+
 
 ```
 
