@@ -1,0 +1,316 @@
+---
+title: ''
+author: ''
+date: ''
+output:
+  word_document:
+    reference_docx: style.1.docx
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include = FALSE}
+
+  knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, 
+                        fig.width  = 5 * 1.67, fig.height = 5)
+
+  load("scripts/models_dec_2019.RData")
+  
+  library(sjPlot)
+  library(tidyverse)
+  library(broom)
+
+
+```
+
+# Statistical methods
+
+Continuous variables were described by their means and SDs, medians and IQRs, and their range; while categorical variables were described by their counts and percentages in each category. Average treatment effects were estimated using mixed effects models with a random effect for participant. All reported models were adjusted for the sex of the participant (to correspond to the sex-stratified randomization lists). We also estimated a model with an added period effect, and another that also included an adjustment for period-specific baseline values of the outcome measure (REF). Following advice from Senn (REF), we did not formally test for a carry-over effect. All model-based estimates are reported with 95% CIs and p-values based on conditional F-tests with Kenward-Roger degrees of freedom (REF). We did not apply any adjustment for multiple testing, but have provided enough information for the reader to do so it they wish. Data were analysed on an intent-to-treat basis (i.e. without consideration for intervention compliance).
+
+To evalaute the possilbity of heterogeneity of treatment effects, we 
+
+All analyses were conducted using R language for statistical computing software V3.6.0 (2019-04-26). We used the lme4 package (REF) to estimate mixed effects models; ggplot2 (REF) to generate plots; and sjPlot to produce tables of model results. All anonymized data and the code used to analyze it and generate outputs can be found on the Open Science Framework (https://osf.io/zq4y9/). 
+
+
+Table 1. Respondent characteristics
+```{r table1_data}
+
+  descript <- select(
+    data,
+    sequence, sex, age_screening, height_m, weight_kg_screen, bmi_screening, 
+    sbpscreening, dbpscreening, smoking_ever, alcohol_consumption,
+              physical_mins, tv_hours, sleep_hours, occupation,
+              educationcategory) %>%
+    mutate(sex = factor(sex, labels = c("Male", "Female")),
+           smoking_ever = factor(smoking_ever, labels = c("No", "Yes")),
+           alcohol_consumption = factor(alcohol_consumption, 
+                                        labels = c("No", "Yes")),
+           occupation = factor(occupation),
+           educationcategory = factor(educationcategory))
+
+```
+
+```{r table1_describe}
+
+  data_frame(Variable       = name.1(descript),
+             N              = n.miss(descript),
+             "Mean SD"      = summary.1(descript),
+             "Median [IQR]" = med.iqr(descript),
+             "(Min, Max)"   = min.max(descript)) %>% knitr::kable()
+  
+```
+
+
+Table 2. Blood pressure outcomes
+```{r}
+
+  model_list <- list(me_sbp_bl, me_c_sbp_bl, 
+                     me_dbp_bl, me_c_dbp_bl)
+  data_list  <- list(me_sbp_df, me_c_sbp_df, 
+                     me_dbp_df, me_c_dbp_df)
+  varnames <- c("SBP", "C SBP", "DBP", "C DBP")
+  measures <- rep(c("SBP", "DBP"), each = 3)
+
+# Just print the estimates and 95%CI from the models  
+  des_est <- function(model){
+    x <- broom::tidy(model) %>% 
+      mutate(estimate = signif(estimate, 2), 
+             ul = signif(estimate + (1.96 * std.error), 3), 
+             ll = signif(estimate - (1.96 * std.error), 3)) %>%
+      filter(term == "tx2")
+    
+    return(paste0(x$estimate, " (", x$ll, " to ", x$ul, ")"))
+  }
+  
+# lapply(model_list, des_est)
+  
+
+# Produce a dataframe of the within-person differences  
+  
+  within_diffs <- function(data, var){
+    select(data, subj_id, tx, ep) %>% 
+    mutate(tx = factor(tx, labels = c("Control", "Active"))) %>%
+    spread(tx, ep) %>% 
+    mutate(effect = Active - Control) %>% 
+    filter(!is.na(effect)) %>%
+    summarise(Mean_diff = signif(mean(effect, na.rm = TRUE), 2),
+              SD_diff = signif(sd(effect, na.rm = TRUE), 2), 
+              n_diff = n(), 
+              Outcome = var) %>% 
+    select(Outcome, n_diff, Mean_diff, SD_diff) %>%
+    return()
+  }
+
+  difs_df <- do.call(bind_rows, map2(data_list, varnames, within_diffs)) %>%
+    mutate(Outcome = factor(Outcome, levels = varnames)) 
+  
+  difs_df$Estimate <- unlist(lapply(model_list, des_est))
+  
+  get_p <- function(model){
+    x <- sjstats::p_value(model) %>% filter(term == "tx2")
+    return(signif(x$p.value, 2))
+    }
+  
+  difs_df$p <- unlist(map(model_list, get_p))
+  
+  means_sds <- function(data, var){
+    full_join(
+      select(data, subj_id, tx, ep) %>%
+        mutate(tx = factor(tx, labels = c("Control", "Active"))) %>%
+        filter(tx == "Control" & !is.na(ep)) %>% 
+        summarise(n_control = n(), 
+                  mean_control = signif(mean(ep, na.rm = TRUE), 2), 
+                  sd_control = signif(sd(ep, na.rm = TRUE), 2), 
+                  Outcome = var), 
+       select(data, subj_id, tx, ep) %>%
+        mutate(tx = factor(tx, labels = c("Control", "Active"))) %>%
+        filter(tx == "Active" & !is.na(ep)) %>% 
+        summarise(n_active = n(), 
+                  mean_active = signif(mean(ep, na.rm = TRUE), 2), 
+                  sd_active = signif(sd(ep, na.rm = TRUE), 2), 
+                  Outcome = var), 
+      by = "Outcome"
+    ) %>%
+    return()
+  }
+  
+  means_df <- do.call(bind_rows, map2(data_list, varnames, means_sds)) 
+  
+  table_df <- full_join(means_df, difs_df, by = "Outcome") %>%
+    select(Outcome, everything())
+  
+  knitr::kable(table_df)
+                            
+```
+
+Figure 1. Mixed-effect model estimated treatment effects for blood pressure outcomes. 
+```{r}
+# Produce a data frame of the estimates and 95%CI from the models and plot it
+  
+  des_est2 <- function(model, varname){
+    x <- broom::tidy(model) %>% 
+      mutate(estimate = signif(estimate, 2), 
+             ul = signif(estimate + (1.96 * std.error), 3), 
+             ll = signif(estimate - (1.96 * std.error), 3), 
+             var = varname) %>%
+      filter(term == "tx2")
+    
+    return(x)
+  }
+  
+  primary_df <- do.call(bind_rows, map2(model_list, varnames, des_est2)) %>%
+    mutate(measure = rep(c("SBP", "DBP"), each = 2)) %>%
+    mutate(var = factor(var, levels = varnames))
+    
+  ggplot(primary_df,
+         aes(x = var, y = estimate, ymax = ul, ymin = ll, color = measure)) +
+    geom_pointrange() +
+    theme_minimal() +
+    xlab("") +
+    ylab("mmHg") +
+    geom_hline(yintercept = 0, linetype = "dashed", size = 1) +
+    scale_color_brewer(guide = FALSE, palette = "Set1")
+  
+    ggsave("plots/primary/all.pdf", width = 33.867, height = 19.05, units = "cm",
+         scale = 0.6, dpi = 600)
+
+  
+```
+
+Figure 2. Change in systolic blood pressure across the two study periods
+```{r}
+
+  mutate(
+    sbp, 
+    treatment_p1 = factor(treatment_p1, labels = c("Control", "Active")), 
+    treatment_p2 = factor(treatment_p2, labels = c("Control", "Active")) 
+  ) %>% 
+  cross_plot("SBP (mmHg)")
+
+  ggsave("plots/primary/sbp.pdf", width = 33.867, height = 19.05, units = "cm",
+         scale = 0.6, dpi = 600)
+```
+
+
+Heterogenity
+
+```{r}
+
+# https://zenodo.org/record/1239539 code
+
+  var_ratio <- function(df, var_lab, logged, ...){
+    
+    if(logged == "Yes"){
+     
+    data <- select(df, subj_id, tx, ep) %>% 
+            mutate(ep = log(ep)) %>%
+            mutate(tx = factor(tx, labels = c("Control", "Active"))) %>% 
+            filter(!is.na(ep)) %>%
+            spread(tx, ep) %>% 
+            mutate(effect = Active - Control) %>% 
+            filter(!is.na(effect)) 
+    }
+    
+    if(logged == "No"){
+     
+    data <- select(df, subj_id, tx, ep) %>% 
+            mutate(tx = factor(tx, labels = c("Control", "Active"))) %>% 
+            filter(!is.na(ep)) %>%
+            spread(tx, ep) %>% 
+            mutate(effect = Active - Control) %>% 
+            filter(!is.na(effect)) 
+    }
+     
+    sdx <- sd(data$Active, na.rm = TRUE) 
+    sdy <- sd(data$Control, na.rm = TRUE) 
+    n   <- nrow(data)
+    rho <- cor(data$Active, data$Control)
+     
+    Qx <- sdx^2*(n-1)            
+    Qy <- sdy^2*(n-1)
+    Qxy <- rho*sdx*sdy*(n-1)
+    num <- (Qx-Qy)*sqrt(n-2)          # Statistic numerator
+    den <- 2*sqrt(Qx*Qy-Qxy^2)        # Statistic denominator
+    Qest <- num/den # T
+    
+    # LL2 <- qt(0.025, n-2)
+    # UL2 <- qt(0.975, n-2)
+    # greater.var.outQ <- sum(Qest < LL2) 
+    # lower.var.outQ <- sum(Qest > UL2)
+    
+    if(Qest < 0){p <- pt(Qest, n-2) * 2}
+    if(Qest > 0){p <- pt(Qest, n-2, lower.tail = FALSE) * 2}
+
+    data <- data_frame(var = var_lab, 
+                       vr = signif(sdx^2/sdy^2, 2), 
+                       p = round(p, 3))
+
+    return(data)
+    
+    }
+     
+  var_ratio(sbp, "SBP") 
+  
+  data_list <- list(sbp, dbp, c_sbp, c_dbp, art_stif, glu, hdl, ldl, oxldl,
+                    pwa_augment, tag, tchol)
+  varnames <- c("SBP", "DBP", "Central SBP", "Central SBP", 
+                "Arterial Stiffness", "Glucose", "HDL", "LDL", "OxLDL", 
+                "PWA Augment", "TAG", "Total Cholesterol")
+     
+  vrs_df <- do.call(bind_rows, map2(data_list, varnames,  var_ratio)) 
+  
+  vrs_df
+
+
+```
+
+```{r hdl_variance_plot}
+
+  mutate(hdl, tx = factor(tx, labels = c("Control", "Active"))) %>%
+  filter(!is.na(ep)) %>%
+  ggplot(aes(x = log(ep), fill = tx)) +
+    geom_density(alpha = 0.5, color = "black") +
+    theme_minimal() +
+    xlab("HDL") +
+    ylab("Density") +
+    scale_fill_brewer("", palette = "Set1")
+
+```
+
+
+
+```{r all_distributions}
+
+  dist(sbp, "SBP (mmHg)") +
+    ggtitle("Systolic Blood Pressure")
+
+  dist(dbp, "DBP (mmHg)", logged = "no") +
+    ggtitle("Diastolic Blood Pressure")
+
+  dist(oxldl, "Log(OXLDL)", logged = "yes") +
+    ggtitle("OXDL")
+  
+  dist(art_stif, "Arterial Stiffness", logged = "no")+
+    ggtitle("Arterial Stiffness")
+  
+  dist(glu, "Glucose", logged = "no") +
+    ggtitle("Glucose")
+  
+  dist(ldl, "LDL", logged = "no") +
+    ggtitle("LDL")
+  
+  dist(hdl, "Log(HDL)", logged = "yes") +
+    ggtitle("HDL")
+  
+  dist(tchol, "Log(TCHOL)", logged = "yes")+
+    ggtitle("Total cholesterol")
+  
+  dist(tag, "Log(TAG)", logged = "yes")+
+    ggtitle("TAG")
+  
+  dist(pwa_augment, "PWA Augment", logged = "no")+
+    ggtitle("Diastolic Blood Pressure")
+
+
+```
+

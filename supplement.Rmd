@@ -1,0 +1,246 @@
+---
+title: "supplmental"
+output: html_document
+---
+
+## Blood pressure
+
+```{r, include = FALSE}
+
+  knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, 
+                        fig.width  = 5 * 1.67, fig.height = 5)
+
+  library(tidyverse)
+  source("scripts/functions.R")
+  load("scripts/models_july_2019.RData")
+  
+  library(sjPlot)
+  
+```
+
+Table 3. Mixed-effects model estimates for systolic blood pressure (mmHg)
+
+```{r}
+
+# SBP 
+
+  labs <- c("Intercept", "Treatment", "Sex", "Period")
+
+  tab_model(
+    me_sbp, me_sbp_p, me_sbp_bl,
+    p.val = "kr",
+    file = "tables/primary/table_me_sbp.html",
+    pred.labels = c(labs, "SBP Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+  
+```
+
+S-Table 1. Mixed-effects model estimates for diastolic blood pressure (mmHg)
+
+```{r}
+
+# DBP 
+
+  tab_model(
+    me_dbp, me_dbp_p, me_dbp_bl,
+    p.val = "kr",
+    file = "tables/primary/table_me_dbp.html",
+    pred.labels = c(labs, "DBP Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+```
+
+S-Table 2. Mixed-effects model estimates for oscillatory systolic blood pressure (mmHg)
+```{r}
+
+# OCS SBP 
+
+  tab_model(
+    me_osc_sbp, me_osc_sbp_p, me_osc_sbp_bl,
+    p.val = "kr",
+    file = "tables/primary/table_me_osc_sbp.html",
+    pred.labels = c(labs, "OSC SBP Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+S-Table 3. Mixed-effects model estimates for oscillatory diastolic blood pressure (mmHg)
+
+```{r}
+
+# OCS DBP 
+
+  tab_model(
+    me_osc_dbp, me_osc_dbp_p, me_osc_dbp_bl,
+    p.val = "kr",
+    file = "tables/primary/table_me_osc_dbp.html",
+    pred.labels = c(labs, "OSC DBP Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+S-Table 4. Mixed-effects model estimates for central systolic blood pressure (mmHg)
+
+```{r}
+
+# C SBP
+
+  tab_model(
+    me_c_sbp, me_c_sbp_p, me_c_sbp_bl,
+    p.val = "kr",
+    file = "tables/primary/table_me_c_sbp.html",
+    pred.labels = c(labs, "C SBP Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+S-Table 5. Mixed-effects model estimates for central diastolic blood pressure (mmHg)
+
+```{r}
+
+# C DBP 
+
+  tab_model(
+    me_c_dbp, me_c_dbp_p, me_c_dbp_bl,
+    p.val = "kr",
+    file = "tables/primary/table_me_c_dbp.html",
+    pred.labels = c(labs, "C DBP Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+## Other outcomes
+
+S-Table 6. Mixed-effects model estimates for OXLDL
+
+```{r}
+# OXLDL ####
+
+  tab_model(
+    me_oxldl, me_oxldl_p, me_oxldl_bl,
+    p.val = "kr",
+    file = "tables/secondary/table_me_oxldl.html",
+    pred.labels = c(labs, "OXLDL Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+S-Table 7. Mixed-effects model estimates for arterial stiffness
+
+```{r}
+
+# Arterial Stiffness ####
+
+  tab_model(
+    me_art_stif, me_art_stif_p, me_art_stif_bl,
+    p.val = "kr",
+    file = "tables/secondary/table_me_art_stif.html",
+    pred.labels = c(labs, "Stiffness Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+S-Table 8. Mixed-effects model estimates for fasting glucose
+
+```{r}
+
+# Fasting glucose ####
+
+  tab_model(
+    me_glu, me_glu_p, me_glu_bl,
+    p.val = "kr",
+    file = "tables/secondary/table_me_glu.html",
+    pred.labels = c(labs, "Glucose Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+S-Table 9. Mixed-effects model estimates for LDL
+
+```{r}
+
+# LDL ####
+
+  tab_model(
+    me_ldl, me_ldl_p, me_ldl_bl,
+    p.val = "kr",
+    file = "tables/secondary/table_me_ldl.html",
+    pred.labels = c(labs, "LDL Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+S-Table 10. Mixed-effects model estimates for HDL
+
+```{r}
+
+# HDL ####
+
+  tab_model(
+    me_hdl, me_hdl_p, me_hdl_bl,
+    p.val = "kr",
+    file = "tables/secondary/table_me_hdl.html",
+    pred.labels = c(labs, "HDL Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+S-Table 11. Mixed-effects model estimates for total cholesterol
+
+```{r}
+
+# TCHOL ####
+
+  tab_model(
+    me_tchol, me_tchol_p, me_tchol_bl,
+    p.val = "kr",
+    file = "tables/secondary/table_me_tchol.html",
+    pred.labels = c(labs, "TCHOL Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+S-Table 12. Mixed-effects model estimates for TAG
+
+```{r}
+
+# TAG ####
+
+  tab_model(
+    me_tag, me_tag_p, me_tag_bl,
+    p.val = "kr",
+    file = "tables/secondary/table_me_tag.html",
+    pred.labels = c(labs, "TAG Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+S-Table 13. Mixed-effects model estimates for PWA augment
+
+```{r}
+
+# PWA Augment ####
+
+  tab_model(
+    me_pwa_augment, me_pwa_augment_p, me_pwa_augment_bl,
+    p.val = "kr",
+    file = "tables/secondary/table_me_pwa_augment.html",
+    pred.labels = c(labs, "PWA AUGMENT Baseline"),
+    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
+    )
+
+```
+
+
