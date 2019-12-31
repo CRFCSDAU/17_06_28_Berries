@@ -7,6 +7,7 @@ output:
     reference_docx: style.1.docx
   html_document:
     df_print: paged
+    keep_md: true
 ---
 
 ```{r setup, include = FALSE}
@@ -14,12 +15,12 @@ output:
   knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, 
                         fig.width  = 5 * 1.67, fig.height = 5)
 
-  load("scripts/models_dec_2019.RData")
-  
+# load("scripts/models_dec_2019.RData")
+  source("scripts/01_project.R") # Produces the model and data objects
+
   library(sjPlot)
   library(tidyverse)
   library(broom)
-
 
 ```
 
@@ -77,7 +78,7 @@ Table 2. Blood pressure outcomes
       mutate(estimate = signif(estimate, 2), 
              ul = signif(estimate + (1.96 * std.error), 3), 
              ll = signif(estimate - (1.96 * std.error), 3)) %>%
-      filter(term == "tx2")
+      filter(term == "txActive")
     
     return(paste0(x$estimate, " (", x$ll, " to ", x$ul, ")"))
   }
@@ -89,7 +90,6 @@ Table 2. Blood pressure outcomes
   
   within_diffs <- function(data, var){
     select(data, subj_id, tx, ep) %>% 
-    mutate(tx = factor(tx, labels = c("Control", "Active"))) %>%
     spread(tx, ep) %>% 
     mutate(effect = Active - Control) %>% 
     filter(!is.na(effect)) %>%
@@ -107,7 +107,7 @@ Table 2. Blood pressure outcomes
   difs_df$Estimate <- unlist(lapply(model_list, des_est))
   
   get_p <- function(model){
-    x <- sjstats::p_value(model) %>% filter(term == "tx2")
+    x <- sjstats::p_value(model) %>% filter(term == "txActive")
     return(signif(x$p.value, 2))
     }
   
@@ -153,7 +153,7 @@ Figure 1. Mixed-effect model estimated treatment effects for blood pressure outc
              ul = signif(estimate + (1.96 * std.error), 3), 
              ll = signif(estimate - (1.96 * std.error), 3), 
              var = varname) %>%
-      filter(term == "tx2")
+      filter(term == "txActive")
     
     return(x)
   }
@@ -171,8 +171,8 @@ Figure 1. Mixed-effect model estimated treatment effects for blood pressure outc
     geom_hline(yintercept = 0, linetype = "dashed", size = 1) +
     scale_color_brewer(guide = FALSE, palette = "Set1")
   
-    ggsave("plots/primary/all.pdf", width = 33.867, height = 19.05, units = "cm",
-         scale = 0.6, dpi = 600)
+# ggsave("plots/primary/all.pdf", width = 33.867, height = 19.05, units = "cm",
+#      scale = 0.6, dpi = 600)
 
   
 ```
@@ -187,8 +187,8 @@ Figure 2. Change in systolic blood pressure across the two study periods
   ) %>% 
   cross_plot("SBP (mmHg)")
 
-  ggsave("plots/primary/sbp.pdf", width = 33.867, height = 19.05, units = "cm",
-         scale = 0.6, dpi = 600)
+# ggsave("plots/primary/sbp.pdf", width = 33.867, height = 19.05, units = "cm",
+#        scale = 0.6, dpi = 600)
 ```
 
 
@@ -198,7 +198,7 @@ Heterogenity
 
 # https://zenodo.org/record/1239539 code
 
-  var_ratio <- function(df, var_lab, logged, ...){
+  var_ratio <- function(df, var_lab, logged = "No", ...){
     
     if(logged == "Yes"){
      
@@ -249,7 +249,7 @@ Heterogenity
     
     }
      
-  var_ratio(sbp, "SBP") 
+# var_ratio(sbp, "SBP") 
   
   data_list <- list(sbp, dbp, c_sbp, c_dbp, art_stif, glu, hdl, ldl, oxldl,
                     pwa_augment, tag, tchol)
@@ -281,36 +281,36 @@ Heterogenity
 
 ```{r all_distributions}
 
-  dist(sbp, "SBP (mmHg)") +
-    ggtitle("Systolic Blood Pressure")
-
-  dist(dbp, "DBP (mmHg)", logged = "no") +
-    ggtitle("Diastolic Blood Pressure")
-
-  dist(oxldl, "Log(OXLDL)", logged = "yes") +
-    ggtitle("OXDL")
-  
-  dist(art_stif, "Arterial Stiffness", logged = "no")+
-    ggtitle("Arterial Stiffness")
-  
-  dist(glu, "Glucose", logged = "no") +
-    ggtitle("Glucose")
-  
-  dist(ldl, "LDL", logged = "no") +
-    ggtitle("LDL")
-  
-  dist(hdl, "Log(HDL)", logged = "yes") +
-    ggtitle("HDL")
-  
-  dist(tchol, "Log(TCHOL)", logged = "yes")+
-    ggtitle("Total cholesterol")
-  
-  dist(tag, "Log(TAG)", logged = "yes")+
-    ggtitle("TAG")
-  
-  dist(pwa_augment, "PWA Augment", logged = "no")+
-    ggtitle("Diastolic Blood Pressure")
-
+  # dist(sbp, "SBP (mmHg)") +
+  #   ggtitle("Systolic Blood Pressure")
+  # 
+  # dist(dbp, "DBP (mmHg)", logged = "no") +
+  #   ggtitle("Diastolic Blood Pressure")
+  # 
+  # dist(oxldl, "Log(OXLDL)", logged = "yes") +
+  #   ggtitle("OXDL")
+  # 
+  # dist(art_stif, "Arterial Stiffness", logged = "no")+
+  #   ggtitle("Arterial Stiffness")
+  # 
+  # dist(glu, "Glucose", logged = "no") +
+  #   ggtitle("Glucose")
+  # 
+  # dist(ldl, "LDL", logged = "no") +
+  #   ggtitle("LDL")
+  # 
+  # dist(hdl, "Log(HDL)", logged = "yes") +
+  #   ggtitle("HDL")
+  # 
+  # dist(tchol, "Log(TCHOL)", logged = "yes")+
+  #   ggtitle("Total cholesterol")
+  # 
+  # dist(tag, "Log(TAG)", logged = "yes")+
+  #   ggtitle("TAG")
+  # 
+  # dist(pwa_augment, "PWA Augment", logged = "no")+
+  #   ggtitle("Diastolic Blood Pressure")
+  # 
 
 ```
 

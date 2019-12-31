@@ -1,6 +1,5 @@
 
   library(tidyverse)
-  source("scripts/functions.R")
 
 # Data -------------------------------------------------------------------------
 
@@ -57,7 +56,7 @@
     gsub("p_2", "p2", .) %>%
     gsub("_bl_", "_b_", .)
 
-  save(data, file = "trial_data_july_2019.RData")
+# save(data, file = gsub(" ", "_", paste0("data_", date(), ".RData")))
 
 
 
