@@ -22,8 +22,7 @@ output:
   library(tidyverse)
   library(broom)
   library(knitr)
-  library(pander)
-  library(DT)
+  library(xtable)
 
 ```
 
@@ -63,7 +62,7 @@ Table 1. Respondent characteristics
              "Mean SD"      = summary.1(descript),
              "Median [IQR]" = med.iqr(descript),
              "(Min, Max)"   = min.max(descript)) %>%
-  kable()
+  xtable()
   
 ```
 
