@@ -22,6 +22,7 @@ output:
   library(tidyverse)
   library(broom)
   library(knitr)
+  library(pander)
 
 ```
 
@@ -58,7 +59,9 @@ Table 1. Respondent characteristics
              N              = n.miss(descript),
              "Mean SD"      = summary.1(descript),
              "Median [IQR]" = med.iqr(descript),
-             "(Min, Max)"   = min.max(descript)) 
+             "(Min, Max)"   = min.max(descript)) %>%
+  as.matrix() %>%
+  kable()
   
 ```
 
@@ -137,10 +140,10 @@ Table 2. Blood pressure outcomes
   
   means_df <- do.call(bind_rows, map2(data_list, varnames, means_sds)) 
   
-  table_df <- full_join(means_df, difs_df, by = "Outcome") %>%
-    select(Outcome, everything())
-  
-  kable(table_df)
+  full_join(means_df, difs_df, by = "Outcome") %>%
+    select(Outcome, everything()) %>%
+    as.matrix() %>%
+    pander()
                             
 ```
 
