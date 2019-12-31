@@ -56,7 +56,7 @@ Table 1. Respondent characteristics
 ```
 
 
-```{r table1_describe, results = "asis"}
+```{r table1_describe}
 
   data_frame(Variable       = name.1(descript),
              N              = n.miss(descript),
