@@ -23,6 +23,7 @@ output:
   library(broom)
   library(knitr)
   library(pander)
+  library(DT)
 
 ```
 
@@ -36,6 +37,7 @@ All analyses were conducted using R language for statistical computing software 
 
 
 Table 1. Respondent characteristics
+
 ```{r table1_data}
 
   descript <- select(
@@ -53,6 +55,7 @@ Table 1. Respondent characteristics
 
 ```
 
+
 ```{r table1_describe, results = "asis"}
 
   data_frame(Variable       = name.1(descript),
@@ -60,12 +63,13 @@ Table 1. Respondent characteristics
              "Mean SD"      = summary.1(descript),
              "Median [IQR]" = med.iqr(descript),
              "(Min, Max)"   = min.max(descript)) %>%
-  kable()
+  datatable()
   
 ```
 
 
 Table 2. Blood pressure outcomes
+
 ```{r results = "asis"}
 
   model_list <- list(me_sbp_bl, me_c_sbp_bl, 
@@ -146,6 +150,7 @@ Table 2. Blood pressure outcomes
 ```
 
 Figure 1. Mixed-effect model estimated treatment effects for blood pressure outcomes. 
+
 ```{r}
 # Produce a data frame of the estimates and 95%CI from the models and plot it
   
@@ -180,6 +185,7 @@ Figure 1. Mixed-effect model estimated treatment effects for blood pressure outc
 ```
 
 Figure 2. Change in systolic blood pressure across the two study periods
+
 ```{r}
 
   mutate(
@@ -277,6 +283,7 @@ Heterogenity
 
 ```
 
+
 ```{r hdl_variance_plot}
 
   mutate(hdl, tx = factor(tx, labels = c("Control", "Active"))) %>%
@@ -289,6 +296,7 @@ Heterogenity
     scale_fill_brewer("", palette = "Set1")
 
 ```
+
 
 ```{r all_distributions}
 

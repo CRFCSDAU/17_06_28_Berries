@@ -25,41 +25,13 @@ Table 1. Respondent characteristics
 
 
 
-Variable              N    Mean SD        Median [IQR]        (Min, Max)    
---------------------  ---  -------------  ------------------  --------------
-sequence              83   0.5 ± 0.5      0 (0, 1)            (0, 1)        
-sex                   83                                                    
-Male                       46 (55.4%)                                       
-Female                     37 (44.6%)                                       
-age_screening         83   57.7 ± 6.2     57 (52.5, 63)       (45, 70)      
-height_m              83   1.7 ± 0.1      1.7 (1.6, 1.8)      (1.5, 1.9)    
-weight_kg_screen      83   80.4 ± 13      80.9 (70.6, 91)     (53.5, 106.3) 
-bmi_screening         83   27.7 ± 3.5     27.9 (25, 29.9)     (20.4, 37.2)  
-sbpscreening          83   140.4 ± 10.1   140 (132.5, 146)    (124, 171)    
-dbpscreening          83   89.5 ± 8.8     89 (83.5, 95)       (67, 112)     
-smoking_ever          83                                                    
-No                         60 (72.3%)                                       
-Yes                        23 (27.7%)                                       
-alcohol_consumption   83                                                    
-No                         21 (25.3%)                                       
-Yes                        62 (74.7%)                                       
-physical_mins         55   43.7 ± 32.1    34.3 (19.6, 57.9)   (4.3, 148)    
-tv_hours              82   1.9 ± 1.7      1.5 (1, 2.5)        (0, 12)       
-sleep_hours           82   7 ± 1.1        7 (6.5, 8)          (3.5, 10)     
-occupation            82                                                    
-1                          37 (45.1%)                                       
-2                          20 (24.4%)                                       
-3                          15 (18.3%)                                       
-4                          1 (1.2%)                                         
-5                          9 (11%)                                          
-educationcategory     82                                                    
-1                          2 (2.4%)                                         
-3                          22 (26.8%)                                       
-4                          34 (41.5%)                                       
-5                          24 (29.3%)                                       
+
+<!--html_preserve--><div id="htmlwidget-8d442e663c4192cf833a" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8d442e663c4192cf833a">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"],["sequence","sex","Male","Female","age_screening","height_m","weight_kg_screen","bmi_screening","sbpscreening","dbpscreening","smoking_ever","No","Yes","alcohol_consumption","No","Yes","physical_mins","tv_hours","sleep_hours","occupation","1","2","3","4","5","educationcategory","1","3","4","5"],["83","83","","","83","83","83","83","83","83","83","","","83","","","55","82","82","82","","","","","","82","","","",""],["0.5 ± 0.5","","46 (55.4%)","37 (44.6%)","57.7 ± 6.2","1.7 ± 0.1","80.4 ± 13","27.7 ± 3.5","140.4 ± 10.1","89.5 ± 8.8","","60 (72.3%)","23 (27.7%)","","21 (25.3%)","62 (74.7%)","43.7 ± 32.1","1.9 ± 1.7","7 ± 1.1","","37 (45.1%)","20 (24.4%)","15 (18.3%)","1 (1.2%)","9 (11%)","","2 (2.4%)","22 (26.8%)","34 (41.5%)","24 (29.3%)"],["0 (0, 1)","","","","57 (52.5, 63)","1.7 (1.6, 1.8)","80.9 (70.6, 91)","27.9 (25, 29.9)","140 (132.5, 146)","89 (83.5, 95)","","","","","","","34.3 (19.6, 57.9)","1.5 (1, 2.5)","7 (6.5, 8)","","","","","","","","","","",""],["(0, 1)","","","","(45, 70)","(1.5, 1.9)","(53.5, 106.3)","(20.4, 37.2)","(124, 171)","(67, 112)","","","","","","","(4.3, 148)","(0, 12)","(3.5, 10)","","","","","","","","","","",""]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Variable<\/th>\n      <th>N<\/th>\n      <th>Mean SD<\/th>\n      <th>Median [IQR]<\/th>\n      <th>(Min, Max)<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script><!--/html_preserve-->
 
 
 Table 2. Blood pressure outcomes
+
 
 --------------------------------------------------------------------------
  Outcome   n_control   mean_control   sd_control   n_active   mean_active 
@@ -89,9 +61,11 @@ Table: Table continues below
 --------------------------------------------------------------------------
 
 Figure 1. Mixed-effect model estimated treatment effects for blood pressure outcomes. 
+
 ![](paper_stats_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
 
 Figure 2. Change in systolic blood pressure across the two study periods
+
 ![](paper_stats_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 
@@ -113,7 +87,9 @@ PWA Augment               0.78   0.205
 log(TAG)                  0.85   0.335
 log(Total Cholesterol)    0.99   0.944
 
+
 ![](paper_stats_files/figure-html/hdl_variance_plot-1.png)<!-- -->
+
 
 ![](paper_stats_files/figure-html/all_distributions-1.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-2.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-3.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-4.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-5.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-6.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-7.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-8.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-9.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-10.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-11.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-12.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-13.png)<!-- -->![](paper_stats_files/figure-html/all_distributions-14.png)<!-- -->
 
