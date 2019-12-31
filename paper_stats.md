@@ -2,7 +2,7 @@
 title: ''
 author: ''
 date: ''
-output:
+output: 
   html_document:
     df_print: paged
     keep_md: true
@@ -25,99 +25,48 @@ Table 1. Respondent characteristics
 
 
 
------------------------------------------------------------------------------
-      Variable         N      Mean SD        Median [IQR]       (Min, Max)   
---------------------- ---- -------------- ------------------- ---------------
-      sequence         83    0.5 Â± 0.5        0 (0, 1)           (0, 1)     
-
-         sex           83                                                    
-
-        Male                 46 (55.4%)                                      
-
-       Female                37 (44.6%)                                      
-
-    age_screening      83   57.7 Â± 6.2      57 (52.5, 63)       (45, 70)    
-
-      height_m         83    1.7 Â± 0.1     1.7 (1.6, 1.8)      (1.5, 1.9)   
-
-  weight_kg_screen     83    80.4 Â± 13     80.9 (70.6, 91)    (53.5, 106.3) 
-
-    bmi_screening      83   27.7 Â± 3.5     27.9 (25, 29.9)    (20.4, 37.2)  
-
-    sbpscreening       83  140.4 Â± 10.1   140 (132.5, 146)     (124, 171)   
-
-    dbpscreening       83   89.5 Â± 8.8      89 (83.5, 95)       (67, 112)   
-
-    smoking_ever       83                                                    
-
-         No                  60 (72.3%)                                      
-
-         Yes                 23 (27.7%)                                      
-
- alcohol_consumption   83                                                    
-
-         No                  21 (25.3%)                                      
-
-         Yes                 62 (74.7%)                                      
-
-    physical_mins      55   43.7 Â± 32.1   34.3 (19.6, 57.9)    (4.3, 148)   
-
-      tv_hours         82    1.9 Â± 1.7      1.5 (1, 2.5)         (0, 12)    
-
-     sleep_hours       82     7 Â± 1.1        7 (6.5, 8)         (3.5, 10)   
-
-     occupation        82                                                    
-
-          1                  37 (45.1%)                                      
-
-          2                  20 (24.4%)                                      
-
-          3                  15 (18.3%)                                      
-
-          4                   1 (1.2%)                                       
-
-          5                   9 (11%)                                        
-
-  educationcategory    82                                                    
-
-          1                   2 (2.4%)                                       
-
-          3                  22 (26.8%)                                      
-
-          4                  34 (41.5%)                                      
-
-          5                  24 (29.3%)                                      
------------------------------------------------------------------------------
+Variable              N    Mean SD        Median [IQR]        (Min, Max)    
+--------------------  ---  -------------  ------------------  --------------
+sequence              83   0.5 ± 0.5      0 (0, 1)            (0, 1)        
+sex                   83                                                    
+Male                       46 (55.4%)                                       
+Female                     37 (44.6%)                                       
+age_screening         83   57.7 ± 6.2     57 (52.5, 63)       (45, 70)      
+height_m              83   1.7 ± 0.1      1.7 (1.6, 1.8)      (1.5, 1.9)    
+weight_kg_screen      83   80.4 ± 13      80.9 (70.6, 91)     (53.5, 106.3) 
+bmi_screening         83   27.7 ± 3.5     27.9 (25, 29.9)     (20.4, 37.2)  
+sbpscreening          83   140.4 ± 10.1   140 (132.5, 146)    (124, 171)    
+dbpscreening          83   89.5 ± 8.8     89 (83.5, 95)       (67, 112)     
+smoking_ever          83                                                    
+No                         60 (72.3%)                                       
+Yes                        23 (27.7%)                                       
+alcohol_consumption   83                                                    
+No                         21 (25.3%)                                       
+Yes                        62 (74.7%)                                       
+physical_mins         55   43.7 ± 32.1    34.3 (19.6, 57.9)   (4.3, 148)    
+tv_hours              82   1.9 ± 1.7      1.5 (1, 2.5)        (0, 12)       
+sleep_hours           82   7 ± 1.1        7 (6.5, 8)          (3.5, 10)     
+occupation            82                                                    
+1                          37 (45.1%)                                       
+2                          20 (24.4%)                                       
+3                          15 (18.3%)                                       
+4                          1 (1.2%)                                         
+5                          9 (11%)                                          
+educationcategory     82                                                    
+1                          2 (2.4%)                                         
+3                          22 (26.8%)                                       
+4                          34 (41.5%)                                       
+5                          24 (29.3%)                                       
 
 
 Table 2. Blood pressure outcomes
 
---------------------------------------------------------------------------
- Outcome   n_control   mean_control   sd_control   n_active   mean_active 
---------- ----------- -------------- ------------ ---------- -------------
-   SBP        81           140            14          83          140     
-
-  C SBP       82           140            14          81          140     
-
-   DBP        81            89           9.5          83          89      
-
-  C DBP       82            77           7.1          81          77      
---------------------------------------------------------------------------
-
-Table: Table continues below
-
- 
---------------------------------------------------------------------------
- sd_active   n_diff   Mean_diff   SD_diff          Estimate           p   
------------ -------- ----------- --------- ------------------------ ------
-    14         81       0.37        11      -0.078 (-2.92 to 2.77)   0.96 
-
-    15         80        1.1        11       0.47 (-2.33 to 3.27)    0.74 
-
-     9         81       -0.26       7.6     -0.14 (-1.97 to 1.69)    0.88 
-
-    6.7        80       -0.31       6.5     -0.27 (-1.76 to 1.22)    0.72 
---------------------------------------------------------------------------
+Outcome    n_control   mean_control   sd_control   n_active   mean_active   sd_active   n_diff   Mean_diff   SD_diff  Estimate                     p
+--------  ----------  -------------  -----------  ---------  ------------  ----------  -------  ----------  --------  -----------------------  -----
+SBP               81            140         14.0         83           140        14.0       81        0.37      11.0  -0.078 (-2.92 to 2.77)    0.96
+C SBP             82            140         14.0         81           140        15.0       80        1.10      11.0  0.47 (-2.33 to 3.27)      0.74
+DBP               81             89          9.5         83            89         9.0       81       -0.26       7.6  -0.14 (-1.97 to 1.69)     0.88
+C DBP             82             77          7.1         81            77         6.7       80       -0.31       6.5  -0.27 (-1.76 to 1.22)     0.72
 
 Figure 1. Mixed-effect model estimated treatment effects for blood pressure outcomes. 
 ![](paper_stats_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
@@ -129,33 +78,20 @@ Figure 2. Change in systolic blood pressure across the two study periods
 Heterogenity
 
 
----------------------------------------
-          var              vr      p   
------------------------- ------ -------
-          SBP             0.98   0.921 
-
-          DBP             0.9    0.528 
-
-      Central SBP         1.1    0.659 
-
-      Central DBP         0.86   0.424 
-
-   Arterial Stiffness     1.1    0.501 
-
-        Glucose            1     0.92  
-
-        log(HDL)          0.58   0.001 
-
-          LDL             1.2    0.309 
-
-       log(OxLDL)         1.2    0.301 
-
-      PWA Augment         0.78   0.205 
-
-        log(TAG)          0.85   0.335 
-
- log(Total Cholesterol)   0.99   0.944 
----------------------------------------
+var                         vr       p
+-----------------------  -----  ------
+SBP                       0.98   0.921
+DBP                       0.90   0.528
+Central SBP               1.10   0.659
+Central DBP               0.86   0.424
+Arterial Stiffness        1.10   0.501
+Glucose                   1.00   0.920
+log(HDL)                  0.58   0.001
+LDL                       1.20   0.309
+log(OxLDL)                1.20   0.301
+PWA Augment               0.78   0.205
+log(TAG)                  0.85   0.335
+log(Total Cholesterol)    0.99   0.944
 
 ![](paper_stats_files/figure-html/hdl_variance_plot-1.png)<!-- -->
 

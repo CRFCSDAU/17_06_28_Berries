@@ -2,7 +2,7 @@
 title: ''
 author: ''
 date: ''
-output:
+output: 
   html_document:
     df_print: paged
     keep_md: true
@@ -21,7 +21,7 @@ output:
   library(sjPlot)
   library(tidyverse)
   library(broom)
-  library(pander)
+  library(knitr)
 
 ```
 
@@ -59,7 +59,7 @@ Table 1. Respondent characteristics
              "Mean SD"      = summary.1(descript),
              "Median [IQR]" = med.iqr(descript),
              "(Min, Max)"   = min.max(descript)) %>% 
-  pander()
+  kable()
   
 ```
 
@@ -141,7 +141,7 @@ Table 2. Blood pressure outcomes
   table_df <- full_join(means_df, difs_df, by = "Outcome") %>%
     select(Outcome, everything())
   
-  pander(table_df)
+  kable(table_df)
                             
 ```
 
@@ -272,7 +272,7 @@ Heterogenity
      
   vrs_df <- do.call(bind_rows, pmap(df, var_ratio)) 
   
-  pander(vrs_df)
+  kable(vrs_df)
 
 
 ```
