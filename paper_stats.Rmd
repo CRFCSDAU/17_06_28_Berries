@@ -61,6 +61,7 @@ Table 1. Respondent characteristics
              "Median [IQR]" = med.iqr(descript),
              "(Min, Max)"   = min.max(descript)) %>%
   as.matrix() %>%
+  as.table() %>%
   kable()
   
 ```
@@ -143,6 +144,7 @@ Table 2. Blood pressure outcomes
   full_join(means_df, difs_df, by = "Outcome") %>%
     select(Outcome, everything()) %>%
     as.matrix() %>%
+    as.table() %>%
     pander()
                             
 ```
