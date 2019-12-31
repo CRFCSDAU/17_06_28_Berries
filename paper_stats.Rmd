@@ -2,11 +2,10 @@
 title: ''
 author: ''
 date: ''
-output:
+output: 
   html_document:
     df_print: paged
-    keep_md: yes
-  'markdown_github:': default
+    keep_md: true
   word_document:
     reference_docx: style.1.docx
 ---
@@ -59,8 +58,7 @@ Table 1. Respondent characteristics
              N              = n.miss(descript),
              "Mean SD"      = summary.1(descript),
              "Median [IQR]" = med.iqr(descript),
-             "(Min, Max)"   = min.max(descript)) %>% 
-  kable()
+             "(Min, Max)"   = min.max(descript)) 
   
 ```
 
