@@ -2,10 +2,11 @@
 title: ''
 author: ''
 date: ''
-output: 
+output:
   html_document:
     df_print: paged
-    keep_md: true
+    keep_md: yes
+  'markdown_github:': default
   word_document:
     reference_docx: style.1.docx
 ---
