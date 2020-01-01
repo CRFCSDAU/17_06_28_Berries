@@ -1,24 +1,34 @@
 ---
-title: "supplmental"
-output: html_document
+title: ''
+author: ''
+date: ''
+output: 
+  html_document:
+    df_print: paged
+    keep_md: true
+  word_document:
+    reference_docx: style.1.docx
 ---
 
 ## Blood pressure
 
 ```{r, include = FALSE}
 
+
   knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, 
                         fig.width  = 5 * 1.67, fig.height = 5)
 
-  library(tidyverse)
-  source("scripts/functions.R")
-  load("scripts/models_july_2019.RData")
-  
-  library(sjPlot)
-  
-```
+# load("scripts/models_dec_2019.RData")
+  source("scripts/01_project.R") # Produces the model and data objects
 
-Table 3. Mixed-effects model estimates for systolic blood pressure (mmHg)
+  library(sjPlot)
+  library(tidyverse)
+
+
+```
+  
+
+Mixed-effects model estimates for systolic blood pressure (mmHg)
 
 ```{r}
 
@@ -36,7 +46,7 @@ Table 3. Mixed-effects model estimates for systolic blood pressure (mmHg)
   
 ```
 
-S-Table 1. Mixed-effects model estimates for diastolic blood pressure (mmHg)
+Mixed-effects model estimates for diastolic blood pressure (mmHg)
 
 ```{r}
 
@@ -51,38 +61,7 @@ S-Table 1. Mixed-effects model estimates for diastolic blood pressure (mmHg)
     )
 ```
 
-S-Table 2. Mixed-effects model estimates for oscillatory systolic blood pressure (mmHg)
-```{r}
-
-# OCS SBP 
-
-  tab_model(
-    me_osc_sbp, me_osc_sbp_p, me_osc_sbp_bl,
-    p.val = "kr",
-    file = "tables/primary/table_me_osc_sbp.html",
-    pred.labels = c(labs, "OSC SBP Baseline"),
-    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
-    )
-
-```
-
-S-Table 3. Mixed-effects model estimates for oscillatory diastolic blood pressure (mmHg)
-
-```{r}
-
-# OCS DBP 
-
-  tab_model(
-    me_osc_dbp, me_osc_dbp_p, me_osc_dbp_bl,
-    p.val = "kr",
-    file = "tables/primary/table_me_osc_dbp.html",
-    pred.labels = c(labs, "OSC DBP Baseline"),
-    dv.labels = c("Unadjusted", "+ Period effect", "+ Baselines")
-    )
-
-```
-
-S-Table 4. Mixed-effects model estimates for central systolic blood pressure (mmHg)
+Mixed-effects model estimates for central systolic blood pressure (mmHg)
 
 ```{r}
 
@@ -98,7 +77,7 @@ S-Table 4. Mixed-effects model estimates for central systolic blood pressure (mm
 
 ```
 
-S-Table 5. Mixed-effects model estimates for central diastolic blood pressure (mmHg)
+Mixed-effects model estimates for central diastolic blood pressure (mmHg)
 
 ```{r}
 
@@ -116,9 +95,10 @@ S-Table 5. Mixed-effects model estimates for central diastolic blood pressure (m
 
 ## Other outcomes
 
-S-Table 6. Mixed-effects model estimates for OXLDL
+Mixed-effects model estimates for log(OXLDL)
 
 ```{r}
+
 # OXLDL ####
 
   tab_model(
@@ -131,7 +111,7 @@ S-Table 6. Mixed-effects model estimates for OXLDL
 
 ```
 
-S-Table 7. Mixed-effects model estimates for arterial stiffness
+Mixed-effects model estimates for arterial stiffness
 
 ```{r}
 
@@ -147,7 +127,7 @@ S-Table 7. Mixed-effects model estimates for arterial stiffness
 
 ```
 
-S-Table 8. Mixed-effects model estimates for fasting glucose
+Mixed-effects model estimates for fasting glucose
 
 ```{r}
 
@@ -163,7 +143,7 @@ S-Table 8. Mixed-effects model estimates for fasting glucose
 
 ```
 
-S-Table 9. Mixed-effects model estimates for LDL
+Mixed-effects model estimates for LDL
 
 ```{r}
 
@@ -179,7 +159,7 @@ S-Table 9. Mixed-effects model estimates for LDL
 
 ```
 
-S-Table 10. Mixed-effects model estimates for HDL
+Mixed-effects model estimates for log(HDL)
 
 ```{r}
 
@@ -195,7 +175,7 @@ S-Table 10. Mixed-effects model estimates for HDL
 
 ```
 
-S-Table 11. Mixed-effects model estimates for total cholesterol
+Mixed-effects model estimates for log(total cholesterol)
 
 ```{r}
 
@@ -211,7 +191,7 @@ S-Table 11. Mixed-effects model estimates for total cholesterol
 
 ```
 
-S-Table 12. Mixed-effects model estimates for TAG
+Mixed-effects model estimates for log(TAG)
 
 ```{r}
 
@@ -227,7 +207,7 @@ S-Table 12. Mixed-effects model estimates for TAG
 
 ```
 
-S-Table 13. Mixed-effects model estimates for PWA augment
+Mixed-effects model estimates for PWA augment
 
 ```{r}
 
@@ -243,4 +223,45 @@ S-Table 13. Mixed-effects model estimates for PWA augment
 
 ```
 
+```{r hdl_variance_plot}
 
+  mutate(hdl, tx = factor(tx, labels = c("Control", "Active"))) %>%
+  filter(!is.na(ep)) %>%
+  ggplot(aes(x = log(ep), fill = tx)) +
+    geom_density(alpha = 0.5, color = "black") +
+    theme_minimal() +
+    xlab("HDL") +
+    ylab("Density") +
+    scale_fill_brewer("", palette = "Set1")
+
+```
+
+
+```{r all_distributions}
+
+  dist(sbp, "SBP (mmHg)", logged = "no")
+
+  dist(dbp, "DBP (mmHg)", logged = "no")
+
+  dist(art_stif, "Arterial Stiffness", logged = "no")
+  
+  dist(glu, "Glucose", logged = "no") 
+  
+  dist(hdl, "HDL", logged = "no")
+  dist(hdl, "Log(HDL)", logged = "yes")
+
+  dist(ldl, "LDL", logged = "no")
+
+  dist(oxldl, "OXLDL", logged = "no")
+  dist(oxldl, "Log(OXLDL)", logged = "yes")
+
+  dist(pwa_augment, "PWA Augment", logged = "no")
+  
+  dist(tag, "TAG", logged = "no")
+  dist(tag, "Log(TAG)", logged = "yes")
+    
+  dist(tchol, "TCHOL", logged = "no")
+  dist(tchol, "Log(TCHOL)", logged = "yes")
+
+
+```

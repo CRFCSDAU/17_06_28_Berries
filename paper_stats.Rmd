@@ -282,46 +282,5 @@ Heterogenity
 ```
 
 
-```{r hdl_variance_plot}
 
-  mutate(hdl, tx = factor(tx, labels = c("Control", "Active"))) %>%
-  filter(!is.na(ep)) %>%
-  ggplot(aes(x = log(ep), fill = tx)) +
-    geom_density(alpha = 0.5, color = "black") +
-    theme_minimal() +
-    xlab("HDL") +
-    ylab("Density") +
-    scale_fill_brewer("", palette = "Set1")
-
-```
-
-
-```{r all_distributions}
-
-  dist(sbp, "SBP (mmHg)", logged = "no")
-
-  dist(dbp, "DBP (mmHg)", logged = "no")
-
-  dist(art_stif, "Arterial Stiffness", logged = "no")
-  
-  dist(glu, "Glucose", logged = "no") 
-  
-  dist(hdl, "HDL", logged = "no")
-  dist(hdl, "Log(HDL)", logged = "yes")
-
-  dist(ldl, "LDL", logged = "no")
-
-  dist(oxldl, "OXLDL", logged = "no")
-  dist(oxldl, "Log(OXLDL)", logged = "yes")
-
-  dist(pwa_augment, "PWA Augment", logged = "no")
-  
-  dist(tag, "TAG", logged = "no")
-  dist(tag, "Log(TAG)", logged = "yes")
-    
-  dist(tchol, "TCHOL", logged = "no")
-  dist(tchol, "Log(TCHOL)", logged = "yes")
-
-
-```
 

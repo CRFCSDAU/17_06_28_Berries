@@ -138,6 +138,7 @@
     select(oxldl, subj_id, sex, period, ep, tx) %>% filter(!is.na(ep)),
     by = c("subj_id", "period", "tx", "sex")
   ) %>%
+    mutate(bl = log(bl), ep = log(ep)) %>%
     mutate(bl = scale(bl, scale = FALSE))
 
   me_oxldl     <- lmer(ep ~ tx + sex +               (1 | subj_id),
@@ -370,7 +371,9 @@
   me_hdl_df <- full_join(
     select(hdl, subj_id, sex, period, bl, tx) %>% filter(!is.na(bl)),
     select(hdl, subj_id, sex, period, ep, tx) %>% filter(!is.na(ep)),
-    by = c("subj_id", "period", "tx", "sex")) %>%
+    by = c("subj_id", "period", "tx", "sex")
+    ) %>%
+    mutate(bl = log(bl), ep = log(ep)) %>%
     mutate(bl = scale(bl, scale = FALSE))
 
   me_hdl     <- lmer(ep ~ tx + sex +               (1 | subj_id),
@@ -428,7 +431,9 @@
   me_tchol_df <- full_join(
     select(tchol, subj_id, sex, period, bl, tx) %>% filter(!is.na(bl)),
     select(tchol, subj_id, sex, period, ep, tx) %>% filter(!is.na(ep)),
-    by = c("subj_id", "period", "tx", "sex")) %>%
+    by = c("subj_id", "period", "tx", "sex")
+    ) %>%
+    mutate(bl = log(bl), ep = log(ep)) %>%
     mutate(bl = scale(bl, scale = FALSE))
 
   me_tchol     <- lmer(ep ~ tx + sex +               (1 | subj_id),
@@ -485,7 +490,9 @@
   me_tag_df <- full_join(
     select(tag, subj_id, sex, period, bl, tx) %>% filter(!is.na(bl)),
     select(tag, subj_id, sex, period, ep, tx) %>% filter(!is.na(ep)),
-    by = c("subj_id", "period", "tx", "sex")) %>%
+    by = c("subj_id", "period", "tx", "sex")
+    ) %>%
+    mutate(bl = log(bl), ep = log(ep)) %>%
     mutate(bl = scale(bl, scale = FALSE))
 
   me_tag     <- lmer(ep ~ tx + sex +               (1 | subj_id),

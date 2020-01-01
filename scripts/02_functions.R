@@ -72,10 +72,8 @@
                       group = treatment_p2),
                   se = FALSE, size = 2) +
       scale_linetype(guide = FALSE) +
-      theme_minimal() +
       scale_color_brewer("Tx", palette = "Set1") +
-      theme(panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank()) +
+      theme(panel.grid.major = element_blank()) +
       scale_x_discrete(labels = c("Start P1", "End P1", "Start P2", "End P2")) +
       xlab("") +
       ylab(ylabel))
@@ -98,10 +96,8 @@
                         group = treatment_p2),
                     se = FALSE, size = 2) +
         scale_linetype(guide = FALSE) +
-        theme_minimal() +
         scale_color_brewer("Tx", palette = "Set1") +
-        theme(panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank()) +
+        theme(panel.grid.major = element_blank()) +
         scale_x_discrete(labels = c("Start P1", "End P1", "Start P2", "End P2")) +
         xlab("") +
         ylab(ylabel))
@@ -122,9 +118,7 @@
       scale_fill_brewer("Tx", palette = "Set1") +
       scale_color_brewer("Tx", palette = "Set1") +
       facet_wrap(~period + timing) +
-      theme_minimal() +
-      theme(panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank()) +
+      theme(panel.grid.major = element_blank()) +
       ylab("") +
       xlab(ylabel))
     }
@@ -137,9 +131,7 @@
         scale_fill_brewer("Tx", palette = "Set1") +
         scale_color_brewer("Tx", palette = "Set1") +
         facet_wrap(~period + timing) +
-        theme_minimal() +
-        theme(panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank()) +
+        theme(panel.grid.major = element_blank()) +
         ylab("") +
         xlab(ylabel))
     }
