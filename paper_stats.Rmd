@@ -22,7 +22,7 @@ output:
   library(tidyverse)
   library(broom)
   library(knitr)
-  library(xtable)
+  library(flextable)
 
 ```
 
@@ -62,7 +62,7 @@ Table 1. Respondent characteristics
              "Mean SD"      = summary.1(descript),
              "Median [IQR]" = med.iqr(descript),
              "(Min, Max)"   = min.max(descript)) %>%
-  xtable()
+  flextable()
   
 ```
 
@@ -144,7 +144,7 @@ Table 2. Blood pressure outcomes
   
   full_join(means_df, difs_df, by = "Outcome") %>%
     select(Outcome, everything()) %>%
-    kable()
+    flextable()
                             
 ```
 
@@ -275,9 +275,8 @@ Heterogenity
     )
   
      
-  vrs_df <- do.call(bind_rows, pmap(df, var_ratio)) 
-  
-  kable(vrs_df)
+  do.call(bind_rows, pmap(df, var_ratio)) %>%
+    flextable()
 
 
 ```
