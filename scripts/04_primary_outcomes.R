@@ -1,4 +1,8 @@
 
+# This script runs the key multilevel models for each of the nominated primary
+# outcomes. It also has code for producing plots as needed.
+# 05_secondary_outcomes.R does the same for the other outcomes.
+
   library(tidyverse)
   library(lme4)
   library(sjPlot)
@@ -40,6 +44,13 @@
 #        scale = 0.6, dpi = 600)
 
 # Models ####
+
+# Because we want to option for period specific baseline adjustment for the
+# given outcome, we first bl and ep specific values and delete the missings then
+# rejoin them; then mean center the bl value. Using the resulting dataframe, we
+# estimate 4 models: sex adjusted; +period effect; + tx by period interaction;
+# + and then a "final" model with sex, period, and baseline (no interactions).
+# A table for these models can be nicely done with sjPlot::tab_models as needed.
 
   me_sbp_df <- full_join(
     select(sbp, subj_id, sex, period, bl, tx) %>% filter(!is.na(bl)),

@@ -1,4 +1,8 @@
 
+# This script fixes up the data sent by the investigator (see project /data
+# folder)
+
+
   library(tidyverse)
 
 # Data -------------------------------------------------------------------------
@@ -56,10 +60,20 @@
     gsub("p_2", "p2", .) %>%
     gsub("_bl_", "_b_", .)
 
+# Add factor levels
+
+# table(data$educationcategory)
+  labs <- c("Primary school", "Secondary school", "University degree",
+            "Other professional qualification")
+  data <- mutate(data, educationcategory = factor(educationcategory, labels = labs))
+
+# table(data$occupation)
+  labs <- c("Professional/managerial/technical",
+            "Non-manual skilled",
+            "Manual skilled",
+            "Semi skilled/unskilled (including students)",
+            "Not disclosed")
+
+  data <- mutate(data, occupation = factor(occupation, labels = labs))
+
 # save(data, file = gsub(" ", "_", paste0("data_", date(), ".RData")))
-
-
-
-
-
-

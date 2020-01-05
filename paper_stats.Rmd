@@ -3,11 +3,11 @@ title: ''
 author: ''
 date: ''
 output: 
+  word_document:
+    reference_docx: style.1.docx
   html_document:
     df_print: paged
     keep_md: true
-  word_document:
-    reference_docx: style.1.docx
 ---
 
 ```{r setup, include = FALSE}
@@ -28,11 +28,29 @@ output:
 
 # Statistical methods
 
-Continuous variables were described by their means and SDs, medians and IQRs, and their range; while categorical variables were described by their counts and percentages in each category. Average treatment effects were estimated using mixed effects models with a random effect for participant. All reported models were adjusted for the sex of the participant (to correspond to the sex-stratified randomization lists). We also estimated a model with an added period effect, and another that also included an adjustment for period-specific baseline values of the outcome measure (REF). Following advice from Senn (REF), we did not formally test for a carry-over effect. All model-based estimates are reported with 95% CIs and p-values based on conditional F-tests with Kenward-Roger degrees of freedom (REF). We did not apply any adjustment for multiple testing, but have provided enough information for the reader to do so it they wish. Data were analysed on an intent-to-treat basis (i.e. without consideration for intervention compliance).
+Continuous variables were described by their means and SDs, medians and IQRs, and their range; while categorical variables were described by their counts and percentages in each category. 
 
-To evalaute the possilbity of heterogeneity of treatment effects, we 
+Average treatment effects were estimated using multilevel models with a random effect for participant. All reported models were adjusted for the sex of the participant (to correspond to the sex-stratified randomization lists). We also estimated a model with an added period effect, and another that also included an adjustment for period-specific baseline values of the outcome measure (REF). Following advice from Senn (REF), we did not formally test for a carry-over effect. All model-based estimates are reported with 95% CIs and p-values based on conditional F-tests with Kenward-Roger degrees of freedom (REF). We did not apply any adjustment for multiple testing, but have provided enough information for the reader to do so it they wish. Data were analysed on an intent-to-treat basis.
 
-All analyses were conducted using R language for statistical computing software V3.6.0 (2019-04-26). We used the lme4 package (REF) to estimate mixed effects models; ggplot2 (REF) to generate plots; and sjPlot to produce tables of model results. All anonymized data and the code used to analyze it and generate outputs can be found on the Open Science Framework (https://osf.io/zq4y9/). 
+Senn REF: 
+Cross-over Trials in Clinical Research. Stephen Senn. Second Edition: Published August 2002 ISBN 0 471 49653 7
+
+KR REF:
+Ulrich Halekoh, Søren Højsgaard (2014)., A Kenward-Roger Approximation and Parametric Bootstrap
+Methods for Tests in Linear Mixed Models - The R Package pbkrtest., Journal of Statistical
+Software, 58(10), 1-30., http://www.jstatsoft.org/v59/i09/
+
+To evalaute the possilbity of heterogeneity of treatment effects, we followed the advice of Cortes et al. (REF) and calulated the various outcome variances for the baseline and end-of-period values under the active treatment condtion, and tested wheher the resulting outcome-specific variance ratios were equal to 1 using a two-sided Pitman Morgan test for paired observations (REF). We reported exact p-values from this test. 
+
+Cortes REF: 
+Cortés J, González JA, Medina MN et al. Does evidence support the high expectations placed in precision medicine? A bibliographic review [version 5; peer review: 2 approved, 1 approved with reservations, 3 not approved]. F1000Research 2019, 7:30 (https://doi.org/10.12688/f1000research.13490.5) 
+
+Pitman-Morgan REFs:
+Sachs L: Applied Statistics: A Handbook of Techniques. 2nd ed. New York: Springer-Verlag, 1984.
+
+Morgan, W.A. (1939) A test for the significance of the difference between two variances in a sample from a normal bivariate distribution. Biometrika, 31, 13-19.
+
+All analyses were conducted using R language for statistical computing software V3.6.0 (2019-04-26). We used the lme4 package (REF) to estimate mixed effects models; ggplot2 (REF) to generate plots; and sjPlot to produce tables of model results. All anonymized data and the code used for the analysis and to generate outputs can be found on the Open Science Framework (https://osf.io/zq4y9/). 
 
 
 Table 1. Respondent characteristics
@@ -55,9 +73,9 @@ Table 1. Respondent characteristics
 ```
 
 
-```{r table1_describe}
+```{r table1_describe_html, eval = knitr::opts_knit$get("rmarkdown.pandoc.to") == "html"}
 
-  data_frame(Variable       = name.1(descript),
+  data_frame(Variable       = tools::toTitleCase(gsub("_", " ", name.1(descript))),
              N              = n.miss(descript),
              "Mean SD"      = summary.1(descript),
              "Median [IQR]" = med.iqr(descript),
@@ -66,6 +84,16 @@ Table 1. Respondent characteristics
   
 ```
 
+```{r table1_describe_word, eval = !knitr::opts_knit$get("rmarkdown.pandoc.to") == "html"}
+
+  data_frame(Variable       = tools::toTitleCase(gsub("_", " ", name.1(descript))),
+             N              = n.miss(descript),
+             "Mean SD"      = summary.1(descript),
+             "Median [IQR]" = med.iqr(descript),
+             "(Min, Max)"   = min.max(descript)) %>%
+  kable()
+  
+```
 
 Table 2. Blood pressure outcomes
 
@@ -99,11 +127,15 @@ Table 2. Blood pressure outcomes
     spread(tx, ep) %>% 
     mutate(effect = Active - Control) %>% 
     filter(!is.na(effect)) %>%
-    summarise(Mean_diff = signif(mean(effect, na.rm = TRUE), 2),
-              SD_diff = signif(sd(effect, na.rm = TRUE), 2), 
-              n_diff = n(), 
+    summarise(n_diff = n(), 
+              Difference = paste0(
+                signif(mean(effect, na.rm = TRUE), 2),
+                " (",
+                signif(sd(effect, na.rm = TRUE), 2),
+                ")"
+              ),
               Outcome = var) %>% 
-    select(Outcome, n_diff, Mean_diff, SD_diff) %>%
+    select(Outcome, n_diff, Difference) %>%
     return()
   }
 
@@ -125,15 +157,23 @@ Table 2. Blood pressure outcomes
         mutate(tx = factor(tx, labels = c("Control", "Active"))) %>%
         filter(tx == "Control" & !is.na(ep)) %>% 
         summarise(n_control = n(), 
-                  mean_control = signif(mean(ep, na.rm = TRUE), 2), 
-                  sd_control = signif(sd(ep, na.rm = TRUE), 2), 
+                  Control = paste0(
+                    signif(mean(ep, na.rm = TRUE), 2),
+                    " (",
+                    signif(sd(ep, na.rm = TRUE), 2),
+                    ")"
+                    ),
                   Outcome = var), 
        select(data, subj_id, tx, ep) %>%
         mutate(tx = factor(tx, labels = c("Control", "Active"))) %>%
         filter(tx == "Active" & !is.na(ep)) %>% 
         summarise(n_active = n(), 
-                  mean_active = signif(mean(ep, na.rm = TRUE), 2), 
-                  sd_active = signif(sd(ep, na.rm = TRUE), 2), 
+                  Active = paste0(
+                    signif(mean(ep, na.rm = TRUE), 2),
+                    " (",
+                    signif(sd(ep, na.rm = TRUE), 2),
+                    ")"
+                    ),
                   Outcome = var), 
       by = "Outcome"
     ) %>%
@@ -142,10 +182,23 @@ Table 2. Blood pressure outcomes
   
   means_df <- do.call(bind_rows, map2(data_list, varnames, means_sds)) 
   
+```
+
+```{r table2_outcomes_word, eval = !knitr::opts_knit$get("rmarkdown.pandoc.to") == "html"}
+
+  full_join(means_df, difs_df, by = "Outcome") %>%
+    select(Outcome, everything()) %>%
+    knitr::kable()
+
+```
+
+
+```{r table2_outcomes_html, eval = knitr::opts_knit$get("rmarkdown.pandoc.to") == "html"}
+
   full_join(means_df, difs_df, by = "Outcome") %>%
     select(Outcome, everything()) %>%
     flextable()
-                            
+
 ```
 
 Figure 1. Mixed-effect model estimated treatment effects for blood pressure outcomes. 
@@ -201,9 +254,15 @@ Figure 2. Change in systolic blood pressure across the two study periods
 
 Heterogenity
 
-```{r}
+```{r active_vs_control_diff, eval = FALSE}
+
+# This calculates, for each patient, the variance of the outcome at the end of 
+# period under control, and the same variance under active. These values are 
+# paired, so a paired test is used on the resulting variance ratio. 
 
 # https://zenodo.org/record/1239539 code
+# The specific test can be found in Sachs p 311
+# https://books.google.ie/books?id=A0bhBwAAQBAJ&printsec=frontcover&dq=Applied+Statistics+A+Handbook+of+Techniques&hl=en&sa=X&ved=0ahUKEwimxdfHxufmAhWsTBUIHbcoBOYQ6AEIKTAA#v=onepage&q=paired&f=false
 
   var_ratio <- function(df, var_lab, logged = "No", ...){
     
@@ -282,5 +341,143 @@ Heterogenity
 ```
 
 
+```{r bl_vs_ep_diff_in_treated}
+
+# This calculates, for each patient, the variance of the outcome at the end of 
+# period under active, and the same variance for the baseline under active. 
+# These values are paired, so a paired test is used on the resulting variance 
+# ratio. 
+
+# https://zenodo.org/record/1239539 code
+
+  var_ratio <- function(df, var_lab, logged = "No", ...){
+    
+    if(logged == "Yes"){
+     
+      df <- filter(df, tx == "Active") %>%
+        select(subj_id, tx, ep, bl) %>%
+        mutate(ep = log(ep), bl = log(bl))
+      
+      df <- full_join(
+        select(df, subj_id, bl) %>% filter(!is.na(bl)), 
+        select(df, subj_id, ep) %>% filter(!is.na(ep)), 
+        by = "subj_id"
+      ) %>%
+        filter(!is.na(bl) & !is.na(ep))
+    }
+        
+    if(logged == "No"){
+     
+       df <- filter(df, tx == "Active") %>%
+        select(subj_id, tx, ep, bl)
+      
+      df <- full_join(
+        select(df, subj_id, bl) %>% filter(!is.na(bl)), 
+        select(df, subj_id, ep) %>% filter(!is.na(ep)), 
+        by = "subj_id"
+      ) %>%
+        filter(!is.na(bl) & !is.na(ep))
+      
+    }
+     
+    sdx <- sd(df$ep, na.rm = TRUE) 
+    sdy <- sd(df$bl, na.rm = TRUE) 
+    n   <- nrow(df)
+    rho <- cor(df$ep, df$bl, use = "complete")
+     
+    Qx <- sdx^2*(n-1)            
+    Qy <- sdy^2*(n-1)
+    Qxy <- rho*sdx*sdy*(n-1)
+  # This is from Sachs...same result. 
+  # Qxy2 <- sum(df$ep * df$bl, na.rm = TRUE) - ((sum(df$ep) * sum(df$bl))/n) 
+    num <- (Qx-Qy)*sqrt(n-2)          # Statistic numerator
+    den <- 2*sqrt(Qx*Qy-Qxy^2)        # Statistic denominator
+    Qest <- num/den # T
+    
+    # LL2 <- qt(0.025, n-2)
+    # UL2 <- qt(0.975, n-2)
+    # greater.var.outQ <- sum(Qest < LL2) 
+    # lower.var.outQ <- sum(Qest > UL2)
+    
+    if(Qest < 0){p <- pt(Qest, n-2) * 2}
+    if(Qest > 0){p <- pt(Qest, n-2, lower.tail = FALSE) * 2}
+
+    df <- data_frame(
+      var = var_lab, 
+      vr = signif(sdx^2/sdy^2, 2), 
+      p = round(p, 3)
+      )
+
+    return(df)
+    
+    }
+     
+# var_ratio(sbp, "SBP") 
+  
+  data_list <- list(sbp, dbp, c_sbp, c_dbp, art_stif, glu, hdl, ldl, oxldl,
+                    pwa_augment, tag, tchol)
+  varnames <- c("SBP", "DBP", "Central SBP", "Central SBP", 
+                "Arterial Stiffness", "Glucose", "HDL", "LDL", "OxLDL", 
+                "PWA Augment", "TAG", "Total Cholesterol")
+
+  df <- data.frame(
+    df = I(list(sbp, dbp, c_sbp, c_dbp, art_stif, glu, hdl, ldl, oxldl,
+                pwa_augment, tag, tchol)),
+    var_lab = c("SBP", "DBP", "Central SBP", "Central DBP", 
+                "Arterial Stiffness", "Glucose", "log(HDL)", "LDL", "log(OxLDL)", 
+                "PWA Augment", "log(TAG)", "log(Total Cholesterol)"), 
+    logged = c(rep("No", 6), "Yes", "No", "Yes", "No", "Yes", "Yes"),
+    stringsAsFactors = FALSE
+    )
+  
+     
+```
+
+```{r table3_vr_html, eval = knitr::opts_knit$get("rmarkdown.pandoc.to") == "html"}
+  
+  do.call(bind_rows, pmap(df, var_ratio)) %>%
+    flextable()
+
+```
+
+```{r table3_vr_word, eval = !knitr::opts_knit$get("rmarkdown.pandoc.to") == "html"}
+  
+  do.call(bind_rows, pmap(df, var_ratio)) %>%
+    knitr::kable()
+
+```
+
+```{r, vr_pm_test, eval = FALSE}
+
+# Same thing, but using the Pitman Morgan test. Exactly the same. 
+
+  df <- filter(dbp, tx == "Active") %>%
+    select(subj_id, tx, ep, bl)
+  
+  df <- full_join(
+    select(df, subj_id, bl) %>% filter(!is.na(bl)), 
+    select(df, subj_id, ep) %>% filter(!is.na(ep)), 
+    by = "subj_id"
+    )
+
+  PairedData::Var.test(df$ep, df$bl, paired = TRUE)
+
+```
+
+
+
+```{r withn_sd, eval = FALSE}
+
+  df <- filter(sbp, tx == "Control") 
+  df <- full_join(
+     select(df, subj_id, bl) %>% filter(!is.na(bl)), 
+     select(df, subj_id, ep) %>% filter(!is.na(ep)), 
+     by = "subj_id"
+  ) %>%
+    mutate(diff = ep - bl)
+  
+  sd(df$diff, na.rm = TRUE)
+
+```
 
 

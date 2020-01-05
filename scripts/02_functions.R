@@ -1,5 +1,9 @@
 
-
+# These scripts includes a number of functions used in the analysis. Namely,
+# there are functions to quickly reshape the main data set for each of the
+# study outcomes as needed; and to plot said data in a manner that makes sense
+# for a cross over trial. There are also functions for creating the main
+# table 1 for the paper.
 
 # Outcome data prep ------------------------------------------------------------
 
@@ -52,7 +56,7 @@
     return(df)
   }
 
-# Outcome cross-over plot ####
+# Outcome cross-over plot ------------------------------------------------------
 
   cross_plot <- function(df, ylabel,logged = c("yes", "no"), ...){
 
@@ -106,7 +110,7 @@
   }
 
 
-# OUtcome distribution plot ####
+# Outcome distribution plot ----------------------------------------------------
 
   dist <- function(data, ylabel, logged = c("yes", "no"), ...){
 
@@ -137,7 +141,7 @@
     }
   }
 
-# Others ####
+# Others -----------------------------------------------------------------------
 
   is_labelled <- function(x) {
     if (length(class(x)) > 1) return(any(class(x) == "labelled"))
@@ -157,212 +161,11 @@
     return(x)
   }
 
-# User defined functions ####
 
-  num <- function(x){
-    x <- as.numeric(gsub("[:alpha:]", "", x))
-    return(x)
-  }
-
-# Extract labels from class = labelled data
-
-  extract.labels <- function(x){attributes(attributes(x)$labels)$names}
-
-# Explore data one variable at a time
-
-  class.slow <- function(data, ...) {
-
-    for (i in seq_along(1:length(data))) {
-
-      readline(prompt = "Press [enter] to continue")
-
-      require(dplyr)
-
-      print(i)
-      names(data[i])   %>% print()
-      class(data[[i]]) %>% print()
-      length(levels(factor(data[[i]]))) %>% print()
-
-      readline(prompt = "Press [enter] to continue")
-
-      if(length(levels(factor(data[[i]]))) < 20){ table(data[i]) %>% print()}
-
-      tryCatch({
-
-        summarise_(data[i],
-                   obs  = ~n(),
-                   mean = ~mean(data[[i]], na.rm = TRUE),
-                   min  = ~min(data[[i]], na.rm = TRUE),
-                   max  = ~max(data[[i]], na.rm = TRUE)) %>%
-          print()
-
-      }, error = function(e){cat("ERROR :",conditionMessage(e), "\n")})
-
-      readline(prompt = "Press [enter] to continue")
-
-      print(data[[i]])
-
-    }
-
-  }
-
-# Quick look at everything once cleaned ####
-
-  plotData <- function(data, ...){
-
-    library(ggplot2)
-    library(viridis)
-
-    for (i in seq_along(data)) {
-
-      tryCatch({
-
-        readline(prompt="Press [enter] to continue")
-
-        if(is.numeric(data[[i]])){
-
-          if(length(unique(data[[i]])) < 8){
-
-            data[[i]] <- factor(data[[i]])
-
-            print(ggplot(data[i], aes_string(x =    names(data[i]),
-                                             fill = names(data[i]))) +
-                    geom_bar() +
-                    ylab("Count") +
-                    ggtitle(ifelse(nchar(names(data[i])) > 60,
-                                   paste(substr(names(data[i]),
-                                                start = 1,
-                                                stop = nchar(names(data[i])) / 2),
-                                         substr(names(data[i]),
-                                                start = (nchar(names(data[i])) / 2) + 1,
-                                                stop = nchar(names(data[i]))),
-                                         sep = "\n"),
-                                   names(data[i]))) +
-                    xlab("") +
-                    scale_fill_viridis("") +
-                    theme_base() +
-                    theme(legend.position = "",
-                          plot.title = element_text(size = 10, hjust = 0)))
-
-            print(table(data[i], dnn = names(data[i])))
-
-            print(round(table(data[i]) / sum(table(data[i])), 2))
-
-          }
-
-          else{
-
-            print(ggplot(data[i], aes_string(x =    names(data[i]))) +
-                    geom_bar(fill = brewer.pal(3, "Set1")[2]) +
-                    ylab("Count") +
-                    ggtitle(ifelse(nchar(names(data[i])) > 60,
-                                   paste(substr(names(data[i]),
-                                                start = 1,
-                                                stop = nchar(names(data[i])) / 2),
-                                         substr(names(data[i]),
-                                                start = (nchar(names(data[i])) / 2) + 1,
-                                                stop = nchar(names(data[i]))),
-                                         sep = "\n"),
-                                   names(data[i]))) +
-                    xlab("") +
-                    scale_fill_viridis("", discrete = TRUE) +
-                    theme_base() +
-                    theme(legend.position = "",
-                          plot.title = element_text(size = 10, hjust = 0)))
-
-            print(summary(data[i]))
-
-          }
-
-        }
-
-        if(is.factor(data[[i]])){
-
-          print(ggplot(data[i], aes_string(x =    names(data[i]),
-                                           fill = names(data[i]))) +
-                  geom_bar() +
-                  ylab("Count") +
-                  ggtitle(ifelse(nchar(names(data[i])) > 60,
-                                 paste(substr(names(data[i]),
-                                              start = 1,
-                                              stop = nchar(names(data[i])) / 2),
-                                       substr(names(data[i]),
-                                              start = (nchar(names(data[i])) / 2) + 1,
-                                              stop = nchar(names(data[i]))),
-                                       sep = "\n"),
-                                 names(data[i]))) +
-                  xlab("") +
-                  scale_fill_viridis("", discrete = TRUE) +
-                  theme_base() +
-                  coord_flip() +
-                  theme(legend.position = "",
-                        plot.title = element_text(size = 10, hjust = 0)))
-
-          print(table(data[i], dnn = names(data[i])))
-
-          print(round(table(data[i]) / sum(table(data[i])), 2))
-
-        }
-
-
-        if(is.character(data[[i]])){
-
-          data[[i]] <- factor(data[[i]])
-
-          print(ggplot(data[i], aes_string(x =    names(data[i]),
-                                           fill = names(data[i]))) +
-                  geom_bar() +
-                  ylab("Count") +
-                  ggtitle(ifelse(nchar(names(data[i])) > 60,
-                                 paste(substr(names(data[i]),
-                                              start = 1,
-                                              stop = nchar(names(data[i])) / 2),
-                                       substr(names(data[i]),
-                                              start = (nchar(names(data[i])) / 2) + 1,
-                                              stop = nchar(names(data[i]))),
-                                       sep = "\n"),
-                                 names(data[i]))) +
-                  xlab("") +
-                  scale_fill_viridis("", discrete = TRUE) +
-                  theme_base() +
-                  coord_flip() +
-                  theme(legend.position = "",
-                        plot.title = element_text(size = 10, hjust = 0)))
-
-          print(table(data[i], dnn = names(data[i])))
-
-          print(round(table(data[i]) / sum(table(data[i])), 2))
-
-        }
-
-
-      }, error = function(e){cat("ERROR :",conditionMessage(e), "\n")})
-
-    }
-
-  }
-
-
-# trm ####
-# Remove trailing and leading white space from characters
-  trim <- function(x) {
-
-    # user defined for removing trail/lead white space
-
-    if (is.character(x) == TRUE) {
-      x <- as.character(gsub("^\\s+|\\s+$", "", x))
-    }
-    else {
-      x <- x
-    }
-  }
-
-# Example
-# data <- as.data.frame(lapply(data, trim), stringsAsFactors = FALSE)
-
-
-# Table functions
-
+# Table functions --------------------------------------------------------------
+# These are used to extract data to make the descriptive table in
+# paper_stats.rmd. Each creates one column for the table (e.g. variable names).
+# They are all then put into a data frame for printing.
 
   tests.1 <- function(data, ...) {
 
@@ -394,7 +197,6 @@
     }
     unlist(tests.list)
   }
-
 
 
   tests.2 <- function(data, ...) {
@@ -429,9 +231,7 @@
   }
 
 
-
 # Generate the list of names for the table
-
 
   name.1 <- function(x, ...) {
 
@@ -450,7 +250,6 @@
 
     unlist(var.names)
   }
-
 
 
 # Means(sds) or counts(%)
@@ -509,6 +308,7 @@
     }
     unlist(summary.list)
   }
+
 
 # Missing observations
 
