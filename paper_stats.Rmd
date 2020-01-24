@@ -3,11 +3,11 @@ title: ''
 author: ''
 date: ''
 output: 
-  word_document:
-    reference_docx: style.1.docx
   html_document:
     df_print: paged
     keep_md: true
+  word_document:
+    reference_docx: style.1.docx
 ---
 
 ```{r setup, include = FALSE}
@@ -40,7 +40,7 @@ Ulrich Halekoh, Søren Højsgaard (2014)., A Kenward-Roger Approximation and Par
 Methods for Tests in Linear Mixed Models - The R Package pbkrtest., Journal of Statistical
 Software, 58(10), 1-30., http://www.jstatsoft.org/v59/i09/
 
-To evalaute the possilbity of heterogeneity of treatment effects, we followed the advice of Cortes et al. (REF) and calulated the various outcome variances for the baseline and end-of-period values under the active treatment condtion, and tested wheher the resulting outcome-specific variance ratios were equal to 1 using a two-sided Pitman Morgan test for paired observations (REF). We reported exact p-values from this test. 
+To evaluate the possibility of heterogeneity of treatment effects, we followed the advice of Cortes et al. (REF) and calculated the various outcome variances for the baseline and end-of-period values under the active treatment condition, and tested whether the resulting outcome-specific variance ratios were equal to 1 using a two-sided Pitman Morgan test for paired observations (REF). We reported exact p-values from this test. 
 
 Cortes REF: 
 Cortés J, González JA, Medina MN et al. Does evidence support the high expectations placed in precision medicine? A bibliographic review [version 5; peer review: 2 approved, 1 approved with reservations, 3 not approved]. F1000Research 2019, 7:30 (https://doi.org/10.12688/f1000research.13490.5) 
@@ -252,7 +252,7 @@ Figure 2. Change in systolic blood pressure across the two study periods
 ```
 
 
-Heterogenity
+Heterogeneity
 
 ```{r active_vs_control_diff, eval = FALSE}
 

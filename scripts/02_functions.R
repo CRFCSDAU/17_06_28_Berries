@@ -53,6 +53,20 @@
     df$time2 <- factor(df$time, labels = c("p1_b", "p1_ep",
                                            "p2_b", "p2_ep"))
 
+    df <- full_join(
+      filter(df, timing == "Baseline" & tx == "Active" & !is.na(bl)) %>%
+        select(subj_id, bl_act = bl),
+      filter(df, timing == "Baseline" & tx == "Control" & !is.na(bl)) %>%
+        select(subj_id, bl_con = bl),
+      by = "subj_id"
+    ) %>% full_join(
+      filter(df, timing == "EoP" & tx == "Control" & !is.na(ep)) %>%
+        select(subj_id, ep_con = ep),
+      by = "subj_id"
+    ) %>% mutate(regular = rowMeans(.[c("bl_act", "bl_con", "ep_con")])) %>%
+      select(subj_id, regular) %>%
+      full_join(df)
+
     return(df)
   }
 
@@ -61,8 +75,14 @@
   cross_plot <- function(df, ylabel,logged = c("yes", "no"), ...){
 
     if(logged == "no"){
+      plt <- ggplot(df, aes(x = time2, y = value, group = subj_id))
+    }
 
-    return(ggplot(df, aes(x = time2, y = value, group = subj_id)) +
+    if(logged == "yes"){
+      plt <- ggplot(df, aes(x = time2, y = log(value), group = subj_id))
+    }
+
+    plt <- plt +
       geom_line(data = filter(df, as.numeric(time) < 3), alpha = 0.2,
                 aes(color = treatment_p1)) +
       geom_smooth(data = filter(df, as.numeric(time) < 3), method = "lm",
@@ -80,33 +100,10 @@
       theme(panel.grid.major = element_blank()) +
       scale_x_discrete(labels = c("Start P1", "End P1", "Start P2", "End P2")) +
       xlab("") +
-      ylab(ylabel))
+      theme_minimal() +
+      ylab(ylabel)
 
-    }
-
-    if(logged == "yes"){
-
-      return(ggplot(df, aes(x = time2, y = log(value), group = subj_id)) +
-        geom_line(data = filter(df, as.numeric(time) < 3), alpha = 0.2,
-                  aes(color = treatment_p1)) +
-        geom_smooth(data = filter(df, as.numeric(time) < 3), method = "lm",
-                    aes(color = treatment_p1, linetype = treatment_p1,
-                        group = treatment_p1),
-                    se = FALSE, size = 2) +
-        geom_line(data = filter(df, as.numeric(time) > 2), alpha = 0.2,
-                  aes(color = treatment_p2)) +
-        geom_smooth(data = filter(df, as.numeric(time) > 2), method = "lm",
-                    aes(color = treatment_p2, linetype = treatment_p2,
-                        group = treatment_p2),
-                    se = FALSE, size = 2) +
-        scale_linetype(guide = FALSE) +
-        scale_color_brewer("Tx", palette = "Set1") +
-        theme(panel.grid.major = element_blank()) +
-        scale_x_discrete(labels = c("Start P1", "End P1", "Start P2", "End P2")) +
-        xlab("") +
-        ylab(ylabel))
-
-    }
+    return(plt)
   }
 
 
@@ -115,21 +112,14 @@
   dist <- function(data, ylabel, logged = c("yes", "no"), ...){
 
     if(logged == "no"){
-
-    return(ggplot(data, aes(x = value, fill = tx, color = tx)) +
-      geom_density(alpha = 0.7) +
-      geom_rug() +
-      scale_fill_brewer("Tx", palette = "Set1") +
-      scale_color_brewer("Tx", palette = "Set1") +
-      facet_wrap(~period + timing) +
-      theme(panel.grid.major = element_blank()) +
-      ylab("") +
-      xlab(ylabel))
+      plt <- ggplot(data, aes(x = value, fill = tx, color = tx))
     }
 
     if(logged == "yes"){
+      plt <- ggplot(data, aes(x = log(value), fill = tx, color = tx))
+    }
 
-      return(ggplot(data, aes(x = log(value), fill = tx, color = tx)) +
+      plt <- plt +
         geom_density(alpha = 0.7) +
         geom_rug() +
         scale_fill_brewer("Tx", palette = "Set1") +
@@ -137,15 +127,18 @@
         facet_wrap(~period + timing) +
         theme(panel.grid.major = element_blank()) +
         ylab("") +
-        xlab(ylabel))
+        theme_minimal() +
+        xlab(ylabel)
+
+      return(plt)
     }
-  }
+
 
 # Others -----------------------------------------------------------------------
 
   is_labelled <- function(x) {
-    if (length(class(x)) > 1) return(any(class(x) == "labelled"))
-    return(class(x) == "labelled")
+    if (length(class(x)) > 1) return(any(class(x) == "haven_labelled"))
+    return(class(x) == "haven_labelled")
   }
 
   unlabel <- function(x) {

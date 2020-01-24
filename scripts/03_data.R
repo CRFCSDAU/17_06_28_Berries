@@ -35,6 +35,7 @@
 
   data <- unlabel(data)
 
+
 # Remove NaNs
 
   data[sapply(data, is.numeric)] <- apply(data[sapply(data, is.numeric)], 2,
@@ -76,4 +77,10 @@
 
   data <- mutate(data, occupation = factor(occupation, labels = labs))
 
-# save(data, file = gsub(" ", "_", paste0("data_", date(), ".RData")))
+# Remove poor comlpliance and observation with cholesterol meds
+
+  data <- filter(data, subj_id != "R031") # Complicance View(filter(data, pc_compliance_p1 < 80))
+  data <- filter(data, as.numeric(dropout) == 0) # Dropout
+  data <- filter(data, statin_use_study == 0) # Statin use
+
+  # save(data, file = gsub(" ", "_", paste0("data_", date(), ".RData")))
